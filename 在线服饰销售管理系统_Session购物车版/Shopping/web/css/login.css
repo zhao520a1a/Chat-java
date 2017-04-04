@@ -1,0 +1,153 @@
+
+
+#fullbg {
+    background-color:gray;
+    left:0;
+    opacity:0.5;
+    position:absolute;
+    top:0;
+    z-index:9990;/*全部遮盖*/
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity:0.5;
+}
+
+.login-page {
+    background-color: #fff;
+    border:2px solid rgba(0,0,0, 0.4);
+    width:600px;
+    height:360px;
+    left:45%;
+    margin:-200px 0 0 -200px;
+    padding:1px;
+    position:fixed !important; /* 浮动对话框 */
+    position:absolute;
+    top:50%;
+    z-index:9999;  /*最外层*/
+    border-radius:5px;
+    display:none;
+}
+
+
+.login-page p {
+    margin:0 0 12px;
+    height:24px;
+    line-height:24px;
+    background:#CCCCCC;
+}
+.login-page p.close {
+    text-align:right;
+    padding-right:10px;
+}
+.login-page p.close a {
+    color:#fff;
+    text-decoration:none;
+}
+
+.login-page .login-body{
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+.login-page.login-body h4 a:hover {
+    color: #353f49;
+}
+
+.login-page input[type="text"], .login-page input[type="password"] {
+    font-size: 1em;
+    padding: 0.9em 1em;
+    width: 100%;
+    color: #999;
+    outline: none;
+    border: 1px solid #E2DCDC;
+    background: #FFFFFF;
+    margin: 0 0 1em 0;
+    -webkit-transition: .5s all;
+    -moz-transition: .5s all;
+    -o-transition: .5s all;
+    -ms-transition: .5s all;
+    transition: .5s all;
+    -webkit-appearance: none;
+}
+
+.login-page input[type="text"]:focus, .login-page input[type="password"]:focus {
+    border-color: #0280e1;
+}
+
+/*提交按钮样式*/
+.login-page input[type="button"] {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #fff;
+    background: #3DC4B6;
+    width: 100%;
+    padding: .8em 1em;
+    font-size: 1em;
+    margin: 0.5em 0 0;
+    -webkit-transition: .5s all;
+    -moz-transition: .5s all;
+    -o-transition: .5s all;
+    -ms-transition: .5s all;
+    transition: .5s all;
+    text-transform: uppercase;
+    -webkit-appearance: none;
+}
+
+.login-page input[type="button"]:hover {
+    background: #137288;
+    letter-spacing: 5px;
+}
+
+.login-page label.checkbox {
+    float: left;
+    margin: 0;
+}
+
+.forgot-grid {
+    margin-top: 2em;
+}
+
+.forgot {
+    float: right;
+}
+
+.forgot a {
+    font-size: 1em;
+    color: #353F49;
+    display: block;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.forgot a:hover {
+    color: #f44336;
+}
+
+.login-page h6 {
+    font-size: 1.1em;
+    color: #999;
+    margin: 2em 0 0;
+}
+
+.login-page h6 a {
+    color: #f44336;
+    margin-left: 7px;
+}
+
+.login-page h6 a:hover {
+    color: #999;
+}
+
+.login-page-bottom h5 {
+    font-size: 1em;
+    color: #999;
+    margin: 1em 0;
+    font-family: 'Offside', cursive;
+}
+
+
+
