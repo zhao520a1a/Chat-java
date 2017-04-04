@@ -1,0 +1,4 @@
+在无法查看既有从贴，
+原因：因为js：rshow的参数article.title是String类型的；
+
+涉及：table.jsp: <!-- 锚点传值 -->      show.jsp:rshow()        ArticleControl.java

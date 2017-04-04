@@ -1,0 +1,150 @@
+建立起逻辑层次：
+db: 这里采用Druid连接池；
+dao:实现数据库中增删改查的功能；
+service:服务层，承上启下作用
+control:与前端页面进行交互，控制调度操作
+filter:过滤器，增加以转码过滤器
+lieser:监听器，实现访客统计功能
+jsp,css,js：前端页面
+
+BSS1：
+
+编写登录模块
+dao层：实现数据的查找功能；
+
+小功能：
+增加登录成功信息提示：(在table.jsp中显示)
+在control层判断是否登录成功，将对应的信息发送给前端指定页显示出来；
+
+进行cookie的实现：
+1.在control层判断客户端上是否勾选的cookie请求标签;
+2.添加cookie
+3.在客户端获得并读出cookie(在show.jsp中显示)
+
+退出当前用户：（在loginout.jsp中编写）
+
+
+注：用户头像的上传留到注册模块完成后实现；
+
+
+BSS2:编写注册模块
+
+重点：用户头像的传输及存储
+因为form表单默认上传类型请求是enctype="application/x-www-form-urlLencoded"，即：一种键值对的形式；
+如果提交的数据中有图片文档，则form表单需要采用enctype="multipart/form-data",即：一种二进制流的形式；
+注：这种方式request找不到以流的形式上传的键值对，即：不能通过组件的id或name，得到value值；
+所以需要通过额外的组件，这里我们使用的是commons-fileupload组件；
+
+Service层：要实现上传图片的功能；
+           要将用户的注册信息封装到vo中；
+
+
+dao层：实现数据的添加功能；
+       注意这里将用户头像添加入数据库，要采用二进制流传输；
+       要通过方法得到图片的所在目录;
+
+
+小功能：
+头像，用户名的显示： 
+重点：后台要将封装好的用户信息返回给前端，供其使用；
+登录成功id->前端请求pic->数据库通过id找到pic->前端显示
+
+BBS3:帖子的分页浏览和添加和删除
+在数据库中创建一个存储过程：以获得当前用户页面中每页应有的行数
+delimiter $
+create procedure q1 (
+	in userid int,   
+	in curid int,
+	out rowsPerPage int, 
+	out maxRowCount int,
+	out maxPage int
+	
+)
+begin 
+	#输出每页的行数pagenum
+	-- 通过输入的用户id（游客按id=999进行查询），查询出bbsuser表中的pagenum字段的值；
+	set @pagenum := 0;  -- 每页的行数
+	if userid = 999 then
+		set @pagenum := 5;
+	else 
+	   select pagenum into @pagenum
+	   from bbsuser
+	   where id = userid;
+	end if;
+	set rowsPerPage = @pagenum;
+	
+	#输出最大行数
+	select count(*) into maxRowCount
+	from article
+	where rootid = 0;
+	
+	#输出最大页数
+	set maxPage = ceil(maxRowCount/@rowsPerPage);
+	
+	#查询出每页的数据
+        /*
+            进行分页数据的查询需要用到limit关键字；
+	    公式：limit (当前页号-1)*一页的行数， 一页的行数 
+            注意：mysql中limit关键字后只能跟一个数，不能是表达式；
+            所以我们采用concat函数连接的方式运行sql语句；
+	*/
+	set @sql := " select * 
+                      from article a inner join bbuser b on (a.user.id=b.id) 
+                      where a.rootid=0 
+                      order by a.id desc 
+                      limit ";
+	set @p1 := (curid-1)*@pagenum;
+	set @p2 := concat(@sql, @p1, ',', @pagenum);
+	prepare stmt from @p2;
+	execute stmt;
+	
+end $
+delimiter ;
+
+增加分页vo,帖子vo;
+dao层：运行数据库中存储过程，将其运行结果就传入PageBean中保存；
+service: 调用dao层
+control：接收前端的请求，调用service层，完成功能，向前端返回得到的结果
+
+添加时用到了以个CKedite编辑器软件包；
+
+小功能：在页面上添加每页显示几行的功能（游客是不可见的），核心：就是改变数据库中该字段的值；
+
+BBS4:增加回帖，删除回帖浏览回帖的功能；
+在显示从贴的前提下，可以增加和删除从贴
+
+1.显示从帖子：
+dao：
+	List<Article> queryReply(int rootid);
+	//String queryTitleByid(int id);
+service：
+	String queryReply(int rootid) ;
+	//String queryTitleByid(int id) ;
+前端：
+	找到小眼睛回帖图标：在table.jsp，找到icon-eye-open 
+	设置用户id: 
+	href :rshow.jsp(回帖小页) 增加：权限问题
+	onclick: show.jsp中的js函数rshow（）运用了AJAX技术【传递主贴的id，当前用户，主贴用户id】
+		 它内部调用showhuitie（）显示回帖信息和设置删除回帖权限；
+        注：函数rshow()将“灌水”页面（content.jsp）中id=postrootid的隐藏域中的参数rootid赋值；
+control:
+	增加case "showReply" 
+2.删除从贴
+dao： 
+	在delArticle（）方法中增加删除从贴的sql语句；
+前端:
+	show.jsp中showwhuitie函数中删除按钮中调用了del()函数，发送了删除请求
+	table.jsp中“删除本帖”中添加rootid=0
+control：
+	修改case "del" 增加通过rootid来判断删除的是主从帖，从而进行相应的处理
+3.增加从贴
+原理：当用户在浏览从贴的页面下点击“回灌”按钮时，修改了“灌水”页面（content.jsp）中action的值；
+
+前端:(无需改)
+	show.jsp中函数addc()将content.jsp中id=postrootaction的隐藏域中的参数action的值改为addReply
+	show.jsp中函数add()中判断出增加从贴时发出相应请求；
+control:
+	增加case "addReply"
+
+ 
+
